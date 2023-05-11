@@ -66,9 +66,20 @@ export class DateTimePickerModal extends React.PureComponent {
   state = {
     currentDate: this.props.date,
     isPickerVisible: this.props.isVisible,
+    isInitialized: false,
   };
 
   didPressConfirm = false;
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      this.props.mode === "countdown" &&
+      this.props.isVisible &&
+      !prevProps.isVisible
+    ) {
+      setTimeout(() => this.setState({ isInitialized: true }), 50);
+    }
+  }
 
   static getDerivedStateFromProps(props, state) {
     if (props.isVisible && !state.isPickerVisible) {
@@ -177,7 +188,11 @@ export class DateTimePickerModal extends React.PureComponent {
             <PickerComponent
               display={display || "spinner"}
               {...otherProps}
-              value={this.state.currentDate}
+              value={
+                this.props.mode !== "countdown" || this.state.isInitialized
+                  ? this.state.currentDate
+                  : new Date(this.props.date.getTime() + 1000) // ios countdown picker starts with at least one minute
+              }
               onChange={this.handleChange}
               // Recent versions @react-native-community/datetimepicker (at least starting with 6.7.0)
               // have a peculiar iOS behaviour where sometimes, for example in react-native Modal,
