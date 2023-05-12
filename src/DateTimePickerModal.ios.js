@@ -71,13 +71,12 @@ export class DateTimePickerModal extends React.PureComponent {
 
   didPressConfirm = false;
 
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.mode === "countdown" &&
-      this.props.isVisible &&
-      !prevProps.isVisible
-    ) {
-      setTimeout(() => this.setState({ isInitialized: true }), 50);
+  componentDidMount() {
+    if (this.props.mode === "countdown") {
+      setTimeout(() => {
+        this.setState({ isInitialized: true });
+        // modal animation time
+      }, 500);
     }
   }
 
